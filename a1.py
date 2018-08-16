@@ -6,6 +6,7 @@ Semester 2, 2018
 """
 
 from a1_support import is_word_english
+import a1_support as a1
 
 __author__ = "Brad Kent, s45355194"
 
@@ -18,56 +19,37 @@ main_menu_options = {
     "q": "q) Quit"
 }
 
-main_menu_input_steps = {
-    1: "Please enter some text to encrypt:",
-    2: "Please enter a shift offset (1-25):",
-    3: "The encrypted text is:"
+main_menu_input_responses = {
+    "e_0": "Please enter some text to encrypt:",
+    "d_0": "Please enter some text to decrypt:",
+    "offset": "Please enter a shift offset (1-25):",
+    "e_2": "The encrypted text is:",
+    "d_2": "The decrypted text is:",
+    "q": "Bye!",
+    "!input": "Invalid Command",
+    "a_!": "No Valid encrypton offset",
+    "a_#" : "Multiple encryption offsets:",
+    "a_*": "Decryption offset"
+    "a_Msg"
 }
 
 def main():
     # Add your main code here
     pass
 
-def main_menu():
-    user_input = "q"
-
-    while True:
-
-        if len(user_input) != 1:
-            print("Invalid command")
-        else:
-            if user_input in main_menu_options:
-                pass
+# Assignment Functions
 
 
-items = [1, 2, 3, 4, 5]
+def encrypt(text, offset):
+    pass
 
-def lambda_tutorial():
 
-    lambda_func = lambda key: key in main_menu_options
+def decrypt(text, offset):
+    pass
 
-    # test = lambda dictt: for x in dictt
 
-    # True to loop with lambda
-    # if !, lambda : lambda
-
-    squared = list(map(lambda x: x + 1, items))  # Converting
-    print(squared)
-
-    x = map(lambda x: x, items)
-
-    # print(list(x))
-
-    # map
-
-    x = lambda y: print(y)
-    x("hellp")
-    print("done")
-    lol = map(lambda y: print(y + 1), items)
-    print("done")
-    # print(list(lol))
-
-def map_tutorial():
+def find_encryption_offsets(encrypted_text):
+    pass
 
 
 ##################################################
