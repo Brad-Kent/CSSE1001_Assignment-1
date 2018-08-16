@@ -30,18 +30,44 @@ main_menu_input_responses = {
     "a_!": "No Valid encrypton offset",
     "a_#" : "Multiple encryption offsets:",
     "a_*": "Decryption offset"
-    "a_Msg"
 }
 
 def main():
     # Add your main code here
-    pass
+    encrypt("abcd", 1)
+    #create_alpabet()
 
 # Assignment Functions
 
 
-def encrypt(text, offset):
+def check_input(input):
+    # Check for weired symbols
+    # Check for upper case
     pass
+
+
+def create_alpabet():
+    for alp in range(ord('a'), ord('z') + 1 ):
+        print(chr(alp))
+
+
+def encrypt(text, offset):
+    """
+    Encrypts text by the offset \
+    :param text:
+    :param offset:
+    :return encrypted text
+    """
+    encrypted_text = ""
+
+    # Only problem is going to be z -> a
+
+    for char in text:
+        encrypted_text += chr(ord(char) + offset)
+
+    print("Text {} : New {}".format(text, encrypted_text))
+
+    return encrypted_text
 
 
 def decrypt(text, offset):
