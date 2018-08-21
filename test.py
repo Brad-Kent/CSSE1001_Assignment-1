@@ -52,7 +52,6 @@ def imparative_menu():
 ##############################################################################
 
 
-
 def procedual_menu():
     print("Welcome")
 
@@ -94,7 +93,7 @@ def procedual_menu():
         print(text_mutated)
 
 
-
+# I could make the loop just functions calls to said commands
 def display_user_options():
     """ This could be a modular method"""
     print("Please choose an option [e/d/a/q]:")
@@ -125,7 +124,13 @@ def get_user_input(user_option):
 
 
 def is_user_input_valid(offset):
-    return offset.isdigit()
+    if offset.isdigit():
+        return False
+    elif offset > 25 or offset < 1:
+        return False
+
+    return True
+
 
 def mutated_msg():
     pass
@@ -139,9 +144,23 @@ def mutated_msg():
 def oop_func_menu():
     pass
 
-
+# Could make decrtypt a negative of encrypt: make offset negative??
 def encrypt(text, offset):
-    return "encrypt"
+    enctypted_string = ""
+
+    if not text.isupper():
+        text = text.upper()
+
+    for char in text:
+        # Find the Encrypted Char: current chat + offset (ASCII)
+        encrypted_loc = ord(char) + offset
+        print("Loc:", encrypted_loc)
+        if encrypted_loc > ord('Z'):
+            encrypted_loc -= 26
+            print("Loc1:", encrypted_loc)
+
+        enctypted_string += chr(encrypted_loc)
+    return enctypted_string
 
 
 def decrypt(text, offset):
@@ -151,6 +170,14 @@ def decrypt(text, offset):
 def auto_decrypt(text, offset):
     return "auto"
 
+
+
+def testing():
+    text = "ABzxc"
+    print(encrypt(text, 1))
+
+
 if __name__ == '__main__':
    # imparative_menu()
-   procedual_menu()
+   #procedual_menu()
+   testing()
