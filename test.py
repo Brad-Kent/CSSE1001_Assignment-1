@@ -58,28 +58,31 @@ def procedual_menu():
 
     while True:
         # Display Menu Options
-        print("Please choose an option [e/d/a/q]:")
-        print("  e) Encrypt some text")
-        print("  d) Decrypt some text")
-        print("  a) Automatically decrypt English text")
-        print("  q) Quit")
+        display_user_options()
 
-        # Get User Input
+        # Get User Menu Option
         user_option = input(">")
 
         # Check to see if input is a valid command
-        if not is_user_input_valid(user_option):
+        if not is_user_option_valid(user_option):
             print("Invalid Command \n")
-            input()
             continue
 
         # Execute user specified sub-program
         if user_option == "q":
             break
 
+        # if not 'Quit', execute crypto program
         user_input = get_user_input(user_option)
         text = user_input[0]
+
+        if not is_user_input_valid(user_input[1]):
+            # TODO: Check documentation to see what to do
+            print("Bit shift range is 1-25")
+            continue
+
         offset = int(user_input[1])
+
         text_mutated = ""
         if user_option == 'e':
             text_mutated = encrypt(text, offset)
@@ -90,8 +93,24 @@ def procedual_menu():
 
         print(text_mutated)
 
-        # Repeat
-        input()
+
+
+def display_user_options():
+    """ This could be a modular method"""
+    print("Please choose an option [e/d/a/q]:")
+    print("  e) Encrypt some text")
+    print("  d) Decrypt some text")
+    print("  a) Automatically decrypt English text")
+    print("  q) Quit")
+
+
+def is_user_option_valid(user_input):
+    menu_options = ['e', 'd', 'a', 'q']
+
+    if user_input in menu_options:
+        return True
+
+    return False
 
 
 def get_user_input(user_option):
@@ -99,24 +118,24 @@ def get_user_input(user_option):
     action = options[user_option]
 
     text = input("Please enter some {}".format(action))
+    # This needs to be protected with int wrapping
     offset = input("Please enter a shift offset (1-25):")
 
     return [text, offset]
 
 
+def is_user_input_valid(offset):
+    return offset.isdigit()
+
 def mutated_msg():
     pass
-def is_user_input_valid(user_input):
-    MENU_OPTIONS = ['e', 'd', 'a', 'q']
 
-    if user_input in MENU_OPTIONS:
-        return True
 
-    return False
+
 
 ##############################################################################
 ##############################################################################
-
+# TODO: make funcs call print, Check docmentation
 def oop_func_menu():
     pass
 
