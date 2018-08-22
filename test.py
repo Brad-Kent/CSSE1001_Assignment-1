@@ -138,46 +138,115 @@ def mutated_msg():
 
 ##############################################################################
 ##############################################################################
-
-
-# TODO: make funcs call print, Check docmentation
+# TODO: make funcs call print, Check documentation
 def oop_func_menu():
     pass
 
-# Could make decrtypt a negative of encrypt: make offset negative??
-def encrypt(text, offset):
-    enctypted_string = ""
 
+# Is Format correct
+def is_textformat_correct(text):
     if not text.isupper():
         text = text.upper()
 
+
+# Do specified Option (Encrypt / Decrypt)
+def format_text(text, offset):
+    # Range: ord('A') -- ord('Z')
+    formated_text = ""
+
     for char in text:
-        # Find the Encrypted Char: current chat + offset (ASCII)
-        encrypted_loc = ord(char) + offset
-        print("Loc:", encrypted_loc)
-        if encrypted_loc > ord('Z'):
-            encrypted_loc -= 26
-            print("Loc1:", encrypted_loc)
+        # If Current Char is not in Range, skip over it
+        ## is_char_a_letter()
+        if char < 'A' or char > 'Z':
+            formated_text += char
+            print("FUCJ")
+            continue
+        offset_char = ord(char) + offset
 
-        enctypted_string += chr(encrypted_loc)
-    return enctypted_string
+        ## is_char_out_of_range
+        ### if T: calculate new char range -> new char value in range
+        if offset_char > ord('Z'):
+            print(">")
+            offset_char -= 26 # ord('A') + offset:::: new_offset =  offset_char - ord('Z') + ord('A')
+        elif offset_char < ord('A'):
+            print("<")
+            offset_char += 26 # ord('Z') + offset
 
+        formated_text += chr(offset_char)
+    return formated_text
+
+
+# Could make decrypt a negative of encrypt: make offset negative??
+def encrypt(text, offset):
+    """
+    Encrypts by replacing each letter with the letter some fixed number of positions down the alphabet. Returns the encrypted text.
+
+    :param text: The text to be encrypted
+    :param offset: Shift text offset amounts of times
+    :return: Encrypted Text
+    """
+
+    return format_text(text, offset)
 
 def decrypt(text, offset):
-    return "decrypt"
+    """
+    Decrypts text that was encrypted by the encrypt function above. Returns the decrypted text.
+
+    :param text: Encrypted Text
+    :param offset: Letter Offset
+    :return: Decrypted Text
+    """
+    return format_text(text, -offset)
+
 
 
 def auto_decrypt(text, offset):
     return "auto"
 
 
+# Do specified Option (Encrypt / Decrypt)
+def format_text1(text, offset):
+    # Range: ord('A') -- ord('Z')
+
+    MIN = ord('A')
+    MAX = ord('Z')
+    RANGE = 26
+    for char in text:
+        # If Current Char is not in Range, skip over it
+        if char < MIN or char > MAX:
+            continue
+        offset_char = ord(char) + offset
+
+        if offset_char > ord('Z'):
+            offset_char -= 26
+        elif offset_char < ord('A'):
+            pass
+
 
 def testing():
-    text = "ABzxc"
+    text = "AB"
     print(encrypt(text, 1))
-
+    print(decrypt("BC", 1))
 
 if __name__ == '__main__':
    # imparative_menu()
    #procedual_menu()
    testing()
+
+
+"""
+    encrypted_string = ""
+
+    for char in text:
+        # Find the Encrypted Char: current chat + offset (ASCII)
+        encrypted_loc = ord(char) + offset
+        print("Loc:", encrypted_loc)
+
+        if encrypted_loc > ord('Z'):
+            encrypted_loc -= 26
+        elif encrypted_loc < ord('A'):
+            encrypted_loc = ord('Z') + offset + 1
+
+        encrypted_string += chr(encrypted_loc)
+    return encrypted_string
+"""
