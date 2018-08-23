@@ -11,53 +11,38 @@ import a1_support as a1
 __author__ = "Brad Kent, S45355194"
 
 
-def procedual_menu():
-    print("Welcome")
+FLAG_QUIT = False
 
+
+def menu():
+    num_of_its: int = 0
     while True:
-        # Display Menu Options
-        display_user_options()
+        print("-"* 20)
+        num_of_its += 1
+        print("Iterations:", num_of_its)
+        # Display Sub-Programs w/ Key
+        display_options()
 
-        # Get User Menu Option
-        user_option = input(">")
+        # Get Users Choice
+        users_choice = input(">")
 
-        # Check to see if input is a valid command
-        if not is_user_option_valid(user_option):
-            print("Invalid Command \n")
+        # Validate Input
+        if not is_user_choice_valid(users_choice):
+            print("Invalid Command")
             continue
 
-        # Execute user specified sub-program
-        if user_option == "q":
+        # Execute Users Request
+        if users_choice == 'e':
+            encrypt_text()
+        elif users_choice == 'd':
+            decrypt_text()
+        elif users_choice == 'a':
+            decrypt_text_auto()
+        else:
             break
 
-        text_mutated = ""
 
-        if user_option == 'e':
-            inputs = get_values(user_option)
-            text_mutated = encrypt(inputs[0], inputs[1])
-
-        elif user_option == 'd':
-            inputs = get_values(user_option)
-            text_mutated = decrypt(text, offset)
-
-        else:
-            text_mutated = find_encryption_offsets(text)
-
-
-        print(text_mutated)
-
-def get_values(user_option):
-    # if not 'Quit', execute crypto program
-    user_input = get_user_crypto_input(user_option)
-    # The Text to Operate on
-    text = user_input[0]
-
-    if not is_offset_valid(user_input[1]):
-        # TODO: Check documentation to see what to do
-        print("not valid input")
-        continue
-
-def display_user_options():
+def display_options():
     """
     Displays the Menu keys and options to terminal
     :return:
@@ -71,45 +56,69 @@ def display_user_options():
     print("  q) Quit")
 
 
-def is_user_option_valid(user_input):
+def is_user_choice_valid(users_choice):
     """
     Did the user input a valid option
 
-    :param user_input: The users option
+    :param users_choice: The users option
     :return:  True if input is valid, False if not valid
     """
 
-    menu_options = ['e', 'd', 'a', 'q']
+    return users_choice in ['e', 'd', 'a', 'q']
 
-    if user_input in menu_options:
-        return True
 
-    return False
+def encrypt_text():
+    data = get_crypto_data('e')
+    print_result('e', encrypt(data[0], data[1]))
+
+
+def decrypt_text():
+    data = get_crypto_data('d')
+    print_result('d', decrypt(data[0], data[1]))
+
+
+def decrypt_text_auto():
+    data = get_crypto_data('a')
+    find_encryption_offsets(data[0])
+
+
+def get_crypto_data(user_option):
+    input_data = []
+
+    options = {"e": "text to encrypt", "d": "text to decrypt", "a": "encrypted text"}
+    action = options[user_option]
+
+    input_data.append( input("Please enter some {}".format(action)) )
+
+    if user_option == 'e' or user_option == 'd':
+        input_data.append( int(input("Please enter a shift offset (1-25):")) )
+
+    return input_data
+
+
+def print_result(user_option, mutated_text):
+    options = {'e' : "encrypted", 'd' : "decrypted"}
+    if user_option == 'e' or user_option == 'd':
+        print("The {} text is: {}".format(options[user_option], mutated_text))
+
+    elif user_option == 'a':
+        # if 1                                              # if many                          # if none
+        a = ( "Encryption offset:" + "Decrypted message:") + "Multiple encryption offsets:" + "No valid encryption offset"
+    else:
+        print("Bye!")
 
 
 def is_offset_valid(offset):
 
     if not offset.isdigit():
         print("not a digit:")
-        return False
+        FLAG_QUIT = True
 
     offset = int(offset)
 
     if offset > 25 or offset < 1:
         print("not in range")
-        return False
-
-    return True
-
-
-def get_user_crypto_input(user_option):
-    options = {"e": "text to encrypt", "d": "text to decrypt", "a": "encrypted text"}
-    action = options[user_option]
-
-    text = input("Please enter some {}".format(action))
-    offset = input("Please enter a shift offset (1-25):")
-
-    return [text, offset]
+        FLAG_QUIT = True
 
 
 def format_text(text, offset):
@@ -117,6 +126,7 @@ def format_text(text, offset):
     MAX = 'z'
     formated_text = ""
 
+    print("Begining format")
     # Loops over the current Word, Either: Encrypts or Decrypts Word based on Offset
     for char in text:
         # If Current Char is not in Range, skip over it. ! Lower_Case Letter
@@ -129,15 +139,16 @@ def format_text(text, offset):
         # Calculate the Encrypted / Decrypted Char
         offset_char = chr(ord(char) + offset)
 
-        # is_char_out_of_range: if True: calculate new char range -> new char value in range  # ord('A') + offset :: new_offset =  offset_char - ord('Z') + ord('A')
+        # ord('A') + offset :: new_offset =  offset_char - ord('Z') + ord('A')
+        # is_char_out_of_range: if True: calculate new char range -> new char value in range
         if offset_char > MAX:  # Encrypt
-            print(">")
+            print("> MAX")
             # Go to Start of Range
-            offset_char -= 26
+            offset_char = chr( ord(offset_char) - 26)
         elif offset_char < MIN:  # Decrypt
-            print("<")
+            print("< MIN")
             # Go to End
-            offset_char += 26  # ord('Z') + offset
+            offset_char = chr( ord(offset_char) +  26)  # ord('Z') + offset
 
         formated_text += offset_char
 
@@ -146,7 +157,7 @@ def format_text(text, offset):
 
 # Assignment: 4 Functions
 def main():
-    procedual_menu()
+    menu()
 
 
 def encrypt(text, offset):
@@ -176,10 +187,14 @@ def find_encryption_offsets(text):
     # Test Text with offset entire range
 
     text = text.split(' ')
+    print(type(text))
+    for word in text:
+        print('='*20)
+        for i in range(1, 26):
+            new_format = format_text(word, i)
 
-    for i in range(1, 26):
-        new_format = format_text(text, i)
-        print("New Format:", new_format)
+
+            #print("New Format: Old: {}, New: {}".format(word, new_format))
 
 
 
