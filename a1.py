@@ -8,7 +8,7 @@ Semester 2, 2018
 from a1_support import is_word_english
 import a1_support as a1
 
-__author__ = "Brad Kent, s45355194"
+__author__ = "Brad Kent, S45355194"
 
 
 def procedual_menu():
@@ -30,29 +30,39 @@ def procedual_menu():
         if user_option == "q":
             break
 
-        # if not 'Quit', execute crypto program
-        user_input = get_user_input(user_option)
-        text = user_input[0]
-
-        if not is_user_input_valid(user_input[1]):
-            # TODO: Check documentation to see what to do
-            print("Bit shift range is 1-25")
-            continue
-
-        offset = int(user_input[1])
-
         text_mutated = ""
+
         if user_option == 'e':
-            text_mutated = encrypt(text, offset)
+            inputs = get_values(user_option)
+            text_mutated = encrypt(inputs[0], inputs[1])
+
         elif user_option == 'd':
+            inputs = get_values(user_option)
             text_mutated = decrypt(text, offset)
+
         else:
-            text_mutated = auto_decrypt(text, offset)
+            text_mutated = find_encryption_offsets(text)
+
 
         print(text_mutated)
 
+def get_values(user_option):
+    # if not 'Quit', execute crypto program
+    user_input = get_user_crypto_input(user_option)
+    # The Text to Operate on
+    text = user_input[0]
+
+    if not is_offset_valid(user_input[1]):
+        # TODO: Check documentation to see what to do
+        print("not valid input")
+        continue
 
 def display_user_options():
+    """
+    Displays the Menu keys and options to terminal
+    :return:
+    """
+
     """ This could be a modular method"""
     print("Please choose an option [e/d/a/q]:")
     print("  e) Encrypt some text")
@@ -62,6 +72,13 @@ def display_user_options():
 
 
 def is_user_option_valid(user_input):
+    """
+    Did the user input a valid option
+
+    :param user_input: The users option
+    :return:  True if input is valid, False if not valid
+    """
+
     menu_options = ['e', 'd', 'a', 'q']
 
     if user_input in menu_options:
@@ -70,49 +87,60 @@ def is_user_option_valid(user_input):
     return False
 
 
-def get_user_input(user_option):
-    options = {"e": "text to encrypt", "d": "text to decrypt", "a": "encrypted text"}
-    action = options[user_option]
+def is_offset_valid(offset):
 
-    text = input("Please enter some {}".format(action))
-    # This needs to be protected with int wrapping
-    offset = input("Please enter a shift offset (1-25):")
-
-    return [text, offset]
-
-
-def is_user_input_valid(offset):
-    if offset.isdigit():
+    if not offset.isdigit():
+        print("not a digit:")
         return False
-    elif offset > 25 or offset < 1:
+
+    offset = int(offset)
+
+    if offset > 25 or offset < 1:
+        print("not in range")
         return False
 
     return True
 
 
+def get_user_crypto_input(user_option):
+    options = {"e": "text to encrypt", "d": "text to decrypt", "a": "encrypted text"}
+    action = options[user_option]
+
+    text = input("Please enter some {}".format(action))
+    offset = input("Please enter a shift offset (1-25):")
+
+    return [text, offset]
+
+
 def format_text(text, offset):
-    # Range: ord('A') -- ord('Z')
+    MIN = 'a'
+    MAX = 'z'
     formated_text = ""
 
+    # Loops over the current Word, Either: Encrypts or Decrypts Word based on Offset
     for char in text:
-        # If Current Char is not in Range, skip over it
-        ## is_char_a_letter()
-        if char < 'A' or char > 'Z':
+        # If Current Char is not in Range, skip over it. ! Lower_Case Letter
+        if char < MIN or char > MAX:
             formated_text += char
-            print("FUCJ")
+            print("Out Of Range")
             continue
-        offset_char = ord(char) + offset
 
-        ## is_char_out_of_range
-        ### if T: calculate new char range -> new char value in range
-        if offset_char > ord('Z'):
+        # if char is in range, it is a letter
+        # Calculate the Encrypted / Decrypted Char
+        offset_char = chr(ord(char) + offset)
+
+        # is_char_out_of_range: if True: calculate new char range -> new char value in range  # ord('A') + offset :: new_offset =  offset_char - ord('Z') + ord('A')
+        if offset_char > MAX:  # Encrypt
             print(">")
-            offset_char -= 26  # ord('A') + offset:::: new_offset =  offset_char - ord('Z') + ord('A')
-        elif offset_char < ord('A'):
+            # Go to Start of Range
+            offset_char -= 26
+        elif offset_char < MIN:  # Decrypt
             print("<")
+            # Go to End
             offset_char += 26  # ord('Z') + offset
 
-        formated_text += chr(offset_char)
+        formated_text += offset_char
+
     return formated_text
 
 
@@ -132,6 +160,7 @@ def encrypt(text, offset):
 
     return format_text(text, offset)
 
+
 def decrypt(text, offset):
     """
     Decrypts text that was encrypted by the encrypt function above. Returns the decrypted text.
@@ -142,12 +171,24 @@ def decrypt(text, offset):
     """
     return format_text(text, -offset)
 
-def auto_decrypt(text, offset):
+
+def find_encryption_offsets(text):
     # Test Text with offset entire range
+
+    text = text.split(' ')
+
+    for i in range(1, 26):
+        new_format = format_text(text, i)
+        print("New Format:", new_format)
+
+
+
+
+
+
     # if text >> Offset is in words(), then is valid offset
     ## Many text inputs are multi valued, so\ have to check each <> per white space
     # Split string into List. or could keep state of index, then splice string for each word then push to func:: Lambda in function argument
-    return "auto"
 
 
 ##################################################
@@ -164,4 +205,5 @@ def auto_decrypt(text, offset):
 
 if __name__ == '__main__':
     main()
+
 
