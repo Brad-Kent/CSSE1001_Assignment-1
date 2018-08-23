@@ -1,4 +1,4 @@
-def imparative_menu():
+def structured_menu():
 
     print("Welcome")
 
@@ -131,18 +131,13 @@ def is_user_input_valid(offset):
 
     return True
 
-
-def mutated_msg():
-    pass
-
-
 ##############################################################################
 ##############################################################################
 # TODO: make funcs call print, Check documentation
 def oop_func_menu():
     pass
-
-
+##############################################################################
+##############################################################################
 # Is Format correct
 def is_textformat_correct(text):
     if not text.isupper():
@@ -188,6 +183,7 @@ def encrypt(text, offset):
 
     return format_text(text, offset)
 
+
 def decrypt(text, offset):
     """
     Decrypts text that was encrypted by the encrypt function above. Returns the decrypted text.
@@ -199,8 +195,11 @@ def decrypt(text, offset):
     return format_text(text, -offset)
 
 
-
 def auto_decrypt(text, offset):
+    # Test Text with offset entire range
+    # if text >> Offset is in words(), then is valid offset
+    ## Many text inputs are multi valued, so\ have to check each <> per white space
+    # Split string into List. or could keep state of index, then splice string for each word then push to func:: Lambda in function argument
     return "auto"
 
 
@@ -224,9 +223,11 @@ def format_text1(text, offset):
 
 
 def testing():
-    text = "AB"
+    # TODO: Fix White Spacing
+    text = " AB"
     print(encrypt(text, 1))
     print(decrypt("BC", 1))
+
 
 if __name__ == '__main__':
    # imparative_menu()

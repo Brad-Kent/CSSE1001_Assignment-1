@@ -10,7 +10,7 @@ import a1_support as a1
 
 __author__ = "Brad Kent, s45355194"
 
-
+# Good Idea
 main_menu_options = {
     "greeting": "Please choose an option [e/d/a/q]:",
     "e": "e) Encrypt some text",
@@ -18,7 +18,7 @@ main_menu_options = {
     "a": "a) Automatically decrypt English text",
     "q": "q) Quit"
 }
-
+# Could work, but too complicated/ Fragile
 main_menu_input_responses = {
     "e_0": "Please enter some text to encrypt:",
     "d_0": "Please enter some text to decrypt:",
