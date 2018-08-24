@@ -13,30 +13,31 @@ __author__ = "Brad Kent, S45355194"
 
 FLAG_QUIT = False
 
-
 def menu():
-    num_of_its: int = 0
+    """
+    Runs the Main Menu loop
+    :return: None
+    """
     while True:
         print("-"* 20)
-        num_of_its += 1
-        print("Iterations:", num_of_its)
+
         # Display Sub-Programs w/ Key
         display_options()
 
         # Get Users Choice
-        users_choice = input(">")
+        user_choice = input(">")
 
         # Validate Input
-        if not is_user_choice_valid(users_choice):
+        if not is_user_choice_valid(user_choice):
             print("Invalid Command")
             continue
 
         # Execute Users Request
-        if users_choice == 'e':
+        if user_choice == 'e':
             encrypt_text()
-        elif users_choice == 'd':
+        elif user_choice == 'd':
             decrypt_text()
-        elif users_choice == 'a':
+        elif user_choice == 'a':
             decrypt_text_auto()
         else:
             break
@@ -45,28 +46,28 @@ def menu():
 def display_options():
     """
     Displays the Menu keys and options to terminal
-    :return:
+    :return: None
     """
-
-    """ This could be a modular method"""
+    
+    # TODO: This could be a modular structure
     print("Please choose an option [e/d/a/q]:")
     print("  e) Encrypt some text")
     print("  d) Decrypt some text")
-    print("  a) Automatically decrypt English text")
+    print("  a) Automatically decrypt english text")
     print("  q) Quit")
 
 
-def is_user_choice_valid(users_choice):
+def is_user_choice_valid(user_choice):
     """
     Did the user input a valid option
 
-    :param users_choice: The users option
+    :param user_choice: The users option
     :return:  True if input is valid, False if not valid
     """
 
-    return users_choice in ['e', 'd', 'a', 'q']
+    return user_choice in ['e', 'd', 'a', 'q']
 
-
+# Main Program Methods
 def encrypt_text():
     data = get_crypto_data('e')
     print_result('e', encrypt(data[0], data[1]))
@@ -79,35 +80,47 @@ def decrypt_text():
 
 def decrypt_text_auto():
     data = get_crypto_data('a')
-    find_encryption_offsets(data[0])
+    a_result = list(find_encryption_offsets(data[0]))
+    a_result.append(data[0])
+    print_result('a', a_result)
 
-
+# I/O Methods
 def get_crypto_data(user_option):
+    # The struct to hold the user input data
     input_data = []
 
+    # User option
     options = {"e": "text to encrypt", "d": "text to decrypt", "a": "encrypted text"}
     action = options[user_option]
 
-    input_data.append( input("Please enter some {}".format(action)) )
+    # Get the text
+    input_data.append( input("Please enter some {}: ".format(action)) )
 
+    # If user option is e (Encrypt) or d (Decrypt) get a offset value, Else no offset needed
     if user_option == 'e' or user_option == 'd':
         input_data.append( int(input("Please enter a shift offset (1-25):")) )
 
     return input_data
 
 
-def print_result(user_option, mutated_text):
+def print_result(user_option, result):
     options = {'e' : "encrypted", 'd' : "decrypted"}
+
     if user_option == 'e' or user_option == 'd':
-        print("The {} text is: {}".format(options[user_option], mutated_text))
+        print("The {} text is: {}".format(options[user_option], result))
 
     elif user_option == 'a':
-        # if 1                                              # if many                          # if none
-        a = ( "Encryption offset:" + "Decrypted message:") + "Multiple encryption offsets:" + "No valid encryption offset"
+        if len(result) == 1:  # if none
+            print("No valid encryption offset")
+        elif len(result) == 2:  # if 1
+            print("Encryption offset: {}".format( result[0]))
+            print("Decrypted message: {}".format(( format_text(result[1], result[0]))))
+        else:  # if many
+            print("Multiple encryption offsets: {}".format(result[:-1]))
     else:
         print("Bye!")
 
-
+# Validation Methods: Future Updates 
 def is_offset_valid(offset):
 
     if not offset.isdigit():
@@ -122,17 +135,24 @@ def is_offset_valid(offset):
 
 
 def format_text(text, offset):
+    """
+    The main method that `mutates` the input text. If offset is positive, encrypt: move up/ forward, ...
+    :param text:
+    :param offset:
+    :return: The Formatted text
+    """
+
     MIN = 'a'
     MAX = 'z'
-    formated_text = ""
+    formatted_text = ""
 
-    print("Begining format")
+    #print("Beginning format")
     # Loops over the current Word, Either: Encrypts or Decrypts Word based on Offset
     for char in text:
         # If Current Char is not in Range, skip over it. ! Lower_Case Letter
         if char < MIN or char > MAX:
-            formated_text += char
-            print("Out Of Range")
+            formatted_text += char
+            #print("Out Of Range")
             continue
 
         # if char is in range, it is a letter
@@ -142,17 +162,17 @@ def format_text(text, offset):
         # ord('A') + offset :: new_offset =  offset_char - ord('Z') + ord('A')
         # is_char_out_of_range: if True: calculate new char range -> new char value in range
         if offset_char > MAX:  # Encrypt
-            print("> MAX")
+            #print("> MAX")
             # Go to Start of Range
             offset_char = chr( ord(offset_char) - 26)
         elif offset_char < MIN:  # Decrypt
-            print("< MIN")
+            #print("< MIN")
             # Go to End
             offset_char = chr( ord(offset_char) +  26)  # ord('Z') + offset
 
-        formated_text += offset_char
+        formatted_text += offset_char
 
-    return formated_text
+    return formatted_text
 
 
 # Assignment: 4 Functions
@@ -177,31 +197,60 @@ def decrypt(text, offset):
     Decrypts text that was encrypted by the encrypt function above. Returns the decrypted text.
 
     :param text: Encrypted Text
-    :param offset: Letter Offset
+    :param offset: Int Offset
     :return: Decrypted Text
     """
     return format_text(text, -offset)
 
 
 def find_encryption_offsets(text):
-    # Test Text with offset entire range
-
+    """
+    Returns a tuple containing all possible offsets that could have been used if to encrypt some English text into encrypted_text .
+    :param text:
+    :return: (Tuple) containing all possible data offsets
+    """
+    # Remove whitespace between words in multi word inputs
     text = text.split(' ')
-    print(type(text))
-    for word in text:
-        print('='*20)
-        for i in range(1, 26):
-            new_format = format_text(word, i)
+    #print("Finding offsets")
+
+    # Find valid offsets for word: Explain logic!
+    valid_offsets = []
+    for i in range(1, 26):
+        new_format = format_text(text[0], i)
+
+        if is_word_english(new_format):
+            valid_offsets.append(i)
+        #print("Valid Word? {}".format(is_word_english(new_format)))
+
+    # Test every word for valid word
+    checked_offsets = []  # Checked Offsets that work for every word in input
+    is_offset_legal = True # If current offset has been validated
+
+    # Loop over found offsets
+    for offset in valid_offsets:
+        # Check words w/ possible valid offset
+        for word in text:
+            new_word = format_text(word, offset)
+
+            if not is_word_english(new_word):
+                is_offset_legal = False
+                break
+
+        if is_offset_legal:
+            checked_offsets.append(offset)
+            #print("Found offset")
+        else:
+            is_offset_legal = True
+            #print("no offset")
 
 
-            #print("New Format: Old: {}, New: {}".format(word, new_format))
+    #print("offsets: ", tuple(checked_offsets))
+    return tuple(checked_offsets)
 
 
 
 
-
-
-    # if text >> Offset is in words(), then is valid offset
+  # if text >> Offset is in words(), then is valid offset
     ## Many text inputs are multi valued, so\ have to check each <> per white space
     # Split string into List. or could keep state of index, then splice string for each word then push to func:: Lambda in function argument
 
